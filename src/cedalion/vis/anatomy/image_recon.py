@@ -87,10 +87,10 @@ def image_recon(
     X = X.pint.dequantify()
 
     # Separate the scalar data
-    X_hbo_brain = X.sel(chromo='HbO')[X.is_brain.values]
-    X_hbr_brain = X.sel(chromo='HbR')[X.is_brain.values]
-    X_hbo_scalp = X.sel(chromo='HbO')[~X.is_brain.values]
-    X_hbr_scalp = X.sel(chromo='HbR')[~X.is_brain.values]
+    X_hbo_brain = X.sel(chromo='HbO').squeeze()[X.is_brain.values]
+    X_hbr_brain = X.sel(chromo='HbR').squeeze()[X.is_brain.values]
+    X_hbo_scalp = X.sel(chromo='HbO').squeeze()[~X.is_brain.values]
+    X_hbr_scalp = X.sel(chromo='HbR').squeeze()[~X.is_brain.values]
 
     # Define view directions
     positions = {
@@ -359,7 +359,8 @@ def image_recon_multi_view(
     time_range: tuple = None,
     fps: int = 6,
     geo3d_plot: cdt.LabeledPoints | None = None,
-    wdw_size: tuple = (1024, 768)
+    wdw_size: tuple = (1024, 768),
+    off_screen: bool = False
 ):
     """Generate a multi-view (2×3 grid) vis. of head activity across different views.
 
@@ -514,7 +515,7 @@ def image_recon_multi_view(
             ts_title = title_str if view == 'scale_bar' else None
             p0, surf, lab = image_recon(
                 X_ts, head, cmap=cmap, clim=clim, view_type=view_type,
-                view_position=view, p0=p0, title_str=ts_title, off_screen=False,
+                view_position=view, p0=p0, title_str=ts_title, off_screen=off_screen,
                 plotshape=subplot_shape, iax=iax, wdw_size=wdw_size
             )
             subplots[view] = surf
